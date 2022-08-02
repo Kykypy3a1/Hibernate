@@ -11,12 +11,14 @@ public class Util {
     }
 
     public static void getConnection() throws ClassNotFoundException, SQLException {
-        String url = "jdbc:mysql://localhost:3306";
+        String url = "jdbc:mysql://localhost:3306/diya_userov";
         String username = "root";
         String password = "Risetotop_13";
         Class.forName("com.mysql.cj.jdbc.Driver");
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            System.out.println("we're connected");
+        try  {
+            Connection connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
