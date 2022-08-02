@@ -15,7 +15,7 @@ public class Util {
         String username = "root";
         String password = "Risetotop_13";
         Class.forName("com.mysql.cj.jdbc.Driver");
-        try  {
+        try {
             Connection connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
             throw new RuntimeException(e);

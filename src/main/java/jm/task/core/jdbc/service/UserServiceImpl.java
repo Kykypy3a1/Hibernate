@@ -8,6 +8,7 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
     UserDaoJDBCImpl udj = new UserDaoJDBCImpl();
+
     public void createUsersTable() throws SQLException, ClassNotFoundException {
         udj.createUsersTable();
     }
@@ -17,7 +18,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        udj.saveUser(name,lastName,age);
+        udj.saveUser(name, lastName, age);
     }
 
     public void removeUserById(long id) {

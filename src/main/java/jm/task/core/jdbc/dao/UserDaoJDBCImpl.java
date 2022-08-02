@@ -25,7 +25,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     connection.prepareStatement(
                             "CREATE TABLE Users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), lastname VARCHAR(20), age int)");
             preparedStatement.executeUpdate();
-    }catch (SQLException e) {
+        } catch (SQLException e) {
         }
 
     }
@@ -41,14 +41,14 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
-        public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             PreparedStatement preparedStatement =
                     connection.prepareStatement("insert Users (name, lastname, age) values (?, ?, ? )");
 
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2,lastName);
-            preparedStatement.setByte(3,age);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -70,10 +70,10 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() throws SQLException {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM Users");
-        List <User> listOfUsers = new ArrayList<>();
-        while (resultSet.next()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Users");
+            List<User> listOfUsers = new ArrayList<>();
+            while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getLong("id"));
                 user.setName(resultSet.getString("name"));
@@ -81,12 +81,10 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setAge(resultSet.getByte("age"));
                 listOfUsers.add(user);
             }
-        return listOfUsers;
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
-    }
-
-
+            return listOfUsers;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
