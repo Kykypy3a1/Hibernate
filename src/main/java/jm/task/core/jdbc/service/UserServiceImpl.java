@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
         udj.dropUsersTable();
     }
 
-    public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         udj.saveUser(name, lastName, age);
     }
 

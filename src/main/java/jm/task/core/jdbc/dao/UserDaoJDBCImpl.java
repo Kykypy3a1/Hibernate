@@ -8,68 +8,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-
-    String url = "jdbc:mysql://localhost:3306/diya_userov";
-    String username = "root";
-    String password = "Risetotop_13";
-
+    Connection connection = null;
 
     public UserDaoJDBCImpl() {
 
     }
 
-
-    public void createUsersTable() throws SQLException, ClassNotFoundException {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+    public void createUsersTable() throws ClassNotFoundException {
+        try (Connection connection = Util.getConnection()) {
             PreparedStatement preparedStatement =
                     connection.prepareStatement(
                             "CREATE TABLE Users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), lastname VARCHAR(20), age int)");
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
         }
-
     }
 
     public void dropUsersTable() {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = Util.getConnection()) {
             PreparedStatement preparedStatement =
                     connection.prepareStatement(
                             "DROP table users");
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
 
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void saveUser(String name, String lastName, byte age) {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
+        try (Connection connection = Util.getConnection()) {
+            connection.setAutoCommit(false);
             PreparedStatement preparedStatement =
                     connection.prepareStatement("insert Users (name, lastname, age) values (?, ?, ? )");
-
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            connection.commit();
+        } catch (SQLException | ClassNotFoundException e) {
+            connection.rollback();
         }
     }
 
     public void removeUserById(long id) {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = Util.getConnection()) {
             PreparedStatement preparedStatement =
                     connection.prepareStatement("DELETE FROM Users WHERE id = ?");
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<User> getAllUsers() throws SQLException {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+    public List<User> getAllUsers() {
+        try (Connection connection = Util.getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM Users");
             List<User> listOfUsers = new ArrayList<>();
@@ -82,21 +77,20 @@ public class UserDaoJDBCImpl implements UserDao {
                 listOfUsers.add(user);
             }
             return listOfUsers;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     public void cleanUsersTable() {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = Util.getConnection()) {
             PreparedStatement preparedStatement =
                     connection.prepareStatement("DELETE FROM users WHERE id > 0");
             preparedStatement.executeUpdate();
+        } catch (SQLException ignored) {
 
-
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
