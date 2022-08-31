@@ -1,60 +1,49 @@
 package jm.task.core.jdbc.util;
 
 import jm.task.core.jdbc.model.User;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class Util {
-    static String url = "jdbc:mysql://localhost:3306/diya_userov";
-    static String username = "root";
-    static String password = "Risetotop_13";
+    private static final String URL = "jdbc:mysql://localhost:3306/diya_userov?useSSL=false&allowMultiQueries=true&serverTimezone=UTC";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "Risetotop_13";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    public static SessionFactory sessionFactory;
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName(DRIVER);
         try {
-            return DriverManager.getConnection(url, username, password);
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public static SessionFactory sessionFactory;
+
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
+        try {
+            Configuration configuration = new Configuration()
+                    .setProperty("hibernate.connection.driver_class", DRIVER)
+                    .setProperty("hibernate.connection.url", URL)
+                    .setProperty("hibernate.connection.username", USERNAME)
+                    .setProperty("hibernate.connection.password", PASSWORD)
+                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                    .addAnnotatedClass(User.class)
+                    .setProperty("hibernate.c3p0.min_size","5")
+                    .setProperty("hibernate.c3p0.max_size","200")
+                    .setProperty("hibernate.c3p0.max_statements","200");
 
-                // Hibernate settings equivalent to hibernate.cfg.xml's properties
-                Properties settings = new Properties();
-                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/diya_userov?useSSL=false");
-                settings.put(Environment.USER, "root");
-                settings.put(Environment.PASS, "Risetotop_13");
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
-
-                settings.put(Environment.SHOW_SQL, "true");
-
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-
-                settings.put(Environment.HBM2DDL_AUTO, "create-drop");
-
-                configuration.setProperties(settings);
-
-                configuration.addAnnotatedClass(User.class);
-
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
         return sessionFactory;
     }

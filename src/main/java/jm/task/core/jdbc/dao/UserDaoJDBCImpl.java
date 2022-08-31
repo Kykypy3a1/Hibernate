@@ -28,7 +28,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             PreparedStatement preparedStatement =
                     connection.prepareStatement(
-                            "CREATE TABLE Users (id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), lastname VARCHAR(20), age int)");
+                            "CREATE TABLE Users (id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), lastName VARCHAR(20), age tinyint)");
             preparedStatement.executeUpdate();
         } catch (SQLException ignored) {
         }
