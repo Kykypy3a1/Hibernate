@@ -17,6 +17,7 @@ public class Util {
     private static final String PASSWORD = "Risetotop_13";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     public static SessionFactory sessionFactory;
+
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName(DRIVER);
         try {
@@ -35,9 +36,9 @@ public class Util {
                     .setProperty("hibernate.connection.password", PASSWORD)
                     .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
                     .addAnnotatedClass(User.class)
-                    .setProperty("hibernate.c3p0.min_size","5")
-                    .setProperty("hibernate.c3p0.max_size","200")
-                    .setProperty("hibernate.c3p0.max_statements","200");
+                    .setProperty("hibernate.c3p0.min_size", "5")
+                    .setProperty("hibernate.c3p0.max_size", "200")
+                    .setProperty("hibernate.c3p0.max_statements", "200");
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
